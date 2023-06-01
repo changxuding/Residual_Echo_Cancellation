@@ -26,8 +26,8 @@ function [st, webrtc_out] = webrtc(st, laec_out, mic_frame, spk_frame)
     st.Sx = gamma*st.Sx + (1-gamma)*real(XX.*conj(XX));
 
     % coherence
-    st.Sxd = gamma*st.Sxd + (1-gamma)*(XX.*conj(XX));
-    st.Sed = gamma*st.Sed + (1-gamma)*(EE.*conj(EE));
+    st.Sxd = gamma*st.Sxd + (1-gamma)*(XX.*conj(DD));
+    st.Sed = gamma*st.Sed + (1-gamma)*(EE.*conj(DD));
 
     cohed = real(st.Sed.*conj(st.Sed))./(st.Se.*st.Sd + 1e-10);
     cohxd = real(st.Sxd.*conj(st.Sxd))./(st.Sx.*st.Sd + 1e-10);
