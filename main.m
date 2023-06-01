@@ -4,7 +4,7 @@ dir = './test_audio/music';
 echo_file = [dir, '/mic.wav'];
 far_file = [dir , '/spk.wav'];
 laec_out_file = [dir, '/laec_out.wav'];
-naec_out_file = [dir, '/naec_out_webrtc.wav'];
+naec_out_file = [dir, '/naec_out_speex.wav'];
 [mic, fs1] = audioread(echo_file,'native');
 [spk, fs2] = audioread(far_file, 'native');
 mic = double(mic);
@@ -24,8 +24,7 @@ out_num = floor(out_len/frame_size);
 % mode 
 % 1. webrtc
 % 2. speex
-% 3. volterra
-mode = 1;
+mode = 2;
 
 % init 
 st = main_init(frame_size, mdf_block_num, mode);
@@ -34,12 +33,12 @@ st = main_init(frame_size, mdf_block_num, mode);
 for i = 1:out_num
     echo_frame = mic(1+(i-1)*frame_size:i*frame_size);
     far_frame = spk(1+(i-1)*frame_size:i*frame_size);
-    % linear process
-    [st, lout_frame] = mdf_kalman(st, echo_frame, far_frame);
-    % nonlinear process
+    %  process
     if mode==1
+        [st, lout_frame] = mdf_kalman(st, echo_frame, far_frame);
         [st, nout_frame] = webrtc(st, lout_frame, echo_frame, far_frame);
     elseif mode==2
+        [st, lout_frame] = mdf_kalman(st, echo_frame, far_frame);
         [st, nout_frame] = speex(st, lout_frame);
     end
     %out
@@ -49,8 +48,8 @@ for i = 1:out_num
 end
 
 % write file
-audiowrite(laec_out_file, laec_out'/32678, fs1);
-audiowrite(naec_out_file, naec_out'/32678, fs1);
+audiowrite(laec_out_file, laec_out'/32768, fs1);
+audiowrite(naec_out_file, naec_out'/32768, fs1);
 
 function st = main_init(frame_size, mdf_block_num, mode)
         st.win_size = frame_size * 2;
@@ -113,10 +112,7 @@ function st = main_init(frame_size, mdf_block_num, mode)
             st.old_ps = zeros(st.half_bin,1);
             st.gain = zeros(st.half_bin,1);
             st.speex_buf =  zeros(st.win_size,1);
-        elseif mode==3
-           
         end
-            
 end
 
 
