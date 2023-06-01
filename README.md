@@ -1,5 +1,5 @@
 # Residual_Echo_Cancellation
-Comparison Residual Echo Cancellation between WebRTC and Speex
+Various Algorithm for Residual Echo Cancellation
 
 ## Description 
 - linear echo cancellation used multidelay filter with kalman adaptation
@@ -8,6 +8,7 @@ Comparison Residual Echo Cancellation between WebRTC and Speex
 ## To do
 - [X] WebRTC
 - [X] Speex
+
 
 ## Reference
 - [WebRTC_nlp](https://github.com/shichaog/WebRTC-audio-processing/blob/master/fullaec.m)
