@@ -13,7 +13,7 @@ function [st, out_frame] = mdf_kalman(st, mic_frame, spk_frame)
     %filter out
     st.Y = sum(st.X .* st.coef_adf, 2);
     Y_fft_in = [st.Y; conj(st.Y(end-1 :-1:2))];
-    st.err_adf = ifft(Y_fft_in);
+    st.err_adf = real(ifft(Y_fft_in));
     st.err_adf(1:N) = mic_frame_dc - st.err_adf(N+1:end);
     if st.mode==2
         st.yy = [zeros(N, 1) ;st.err_adf(N1:end)];
@@ -44,7 +44,7 @@ function [st, out_frame] = mdf_kalman(st, mic_frame, spk_frame)
         update_idx = mod(st.update_cnt,st.M)+1;
         Y = st.coef_adf(:,update_idx);
         fft_in = [Y; conj(Y(end-1 :-1:2))];
-        wtmp = ifft(fft_in);
+        wtmp = real(ifft(fft_in));
         wtmp(N+1:end) = 0;
         res = fft(wtmp, st.win_size);
         st.coef_adf(:,update_idx) = res(1:N+1);
@@ -53,7 +53,7 @@ function [st, out_frame] = mdf_kalman(st, mic_frame, spk_frame)
         for update_idx = 1:st.M
             Y = st.coef_adf(:,update_idx);
             fft_in = [Y; conj(Y(end-1 :-1:2))];
-            wtmp = ifft(fft_in);
+            wtmp = real(ifft(fft_in));
             wtmp(N+1:end) = 0;
             res = fft(wtmp, st.win_size);
             st.coef_adf(:,update_idx) = res(1:N+1);
@@ -65,7 +65,7 @@ function [st, out_frame] = mdf_kalman(st, mic_frame, spk_frame)
     H_res = 1 - sum(mu .* st.X .* conj(st.X),2);
     Ek_Res = err_fft(1:N1).*H_res;
     fft_in_res = [Ek_Res; conj(Ek_Res(end-1 :-1:2))];
-    en_t = ifft(fft_in_res);
+    en_t = real(ifft(fft_in_res));
     out_frame = en_t(N+1:end);
 
     function [out,mem] = filter_dc_notch16(in, radius, len, mem)
